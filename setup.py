@@ -1,4 +1,9 @@
+from pip.req import parse_requirements
 from setuptools import setup
+
+# Requirements
+install_reqs = parse_requirements('requirements.txt', session='dummy')
+reqs = [str(ir.req) for ir in install_reqs]
 
 setup(
     name='Flask-Boto3',
@@ -11,10 +16,8 @@ setup(
     py_modules=['flask_boto3'],
     zip_safe=False,
     include_package_data=True,
+    install_requires=reqs,
     platforms='any',
-    install_requires=[
-        'Flask'
-    ],
     classifiers=[
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
