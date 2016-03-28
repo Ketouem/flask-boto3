@@ -31,7 +31,7 @@ class Boto3(object):
         the services.
         """
         requested_services = set(
-            svc.lower() for svc in current_app.config['BOTO3_SERVICES']
+            svc.lower() for svc in current_app.config.get('BOTO3_SERVICES', [])
         )
         try:
             cns = {svc: boto3.client(svc) for svc in requested_services}
