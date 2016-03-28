@@ -33,8 +33,22 @@ class Boto3(object):
         requested_services = set(
             svc.lower() for svc in current_app.config.get('BOTO3_SERVICES', [])
         )
+
+        creds = {
+            'aws_access_key_id': None,
+            'aws_secret_access_key': None
+        }
+        access_key = current_app.config.get('BOTO3_ACCESS_KEY')
+        secret_key = current_app.config.get('BOTO3_SECRET_KEY')
+        if access_key and secret_key:
+            creds['aws_access_key_id'] = access_key
+            creds['aws_secret_access_key'] = secret_key
+
         try:
-            cns = {svc: boto3.client(svc) for svc in requested_services}
+            cns = {
+                svc: boto3.client(svc, **creds)
+                for svc in requested_services
+            }
         except UnknownServiceError:
             raise
         return cns

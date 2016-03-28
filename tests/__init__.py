@@ -35,3 +35,16 @@ class TestFlaskBoto3(TestCase):
                 sorted([i[0][0] for i in mock_client.call_args_list]),
                 sorted(self.app.config['BOTO3_SERVICES'])
             )
+
+    def test_003_pass_credentials_through_app_conf(self, mock_client):
+        self.app.config['BOTO3_SERVICES'] = ['s3']
+        self.app.config['BOTO3_ACCESS_KEY'] = 'access'
+        self.app.config['BOTO3_SECRET_KEY'] = 'secret'
+        b = Boto3(self.app)
+        with self.app.app_context():
+            b.connections
+            mock_client.assert_called_once_with(
+                's3',
+                aws_access_key_id='access',
+                aws_secret_access_key='secret'
+            )
