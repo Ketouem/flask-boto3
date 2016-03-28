@@ -1,10 +1,7 @@
 import boto3
 from botocore.exceptions import UnknownServiceError
+from flask import _app_ctx_stack as stack
 from flask import current_app
-try:
-    from flask import _app_ctx_stack as stack
-except ImportError:
-    from flask import _request_ctx_stack as stack
 
 
 class Boto3(object):
@@ -21,10 +18,7 @@ class Boto3(object):
             self.init_app(app)
 
     def init_app(self, app):
-        if hasattr(app, 'teardown_appcontext'):
-            app.teardown_appcontext(self.teardown)
-        else:
-            app.teardown_request(self.teardown)
+        app.teardown_appcontext(self.teardown)
 
     def connect(self):
         """Iterate through the application configuration and instantiate

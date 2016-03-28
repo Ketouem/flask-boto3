@@ -1,12 +1,9 @@
 from unittest import TestCase
-from unittest.mock import patch
+from mock import patch
 from nose.tools import assert_is_instance, assert_list_equal, eq_
 
 from flask import Flask
-try:
-    from flask import _app_ctx_stack as stack
-except ImportError:
-    from flask import _request_ctx_stack as stack
+from flask import _app_ctx_stack as stack
 from flask.ext.boto3 import Boto3
 
 
