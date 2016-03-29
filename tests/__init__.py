@@ -45,3 +45,26 @@ class TestFlaskBoto3(TestCase):
                 aws_access_key_id='access',
                 aws_secret_access_key='secret'
             )
+
+    def test_004_pass_optional_params_through_conf(self, mock_client):
+        self.app.config['BOTO3_SERVICES'] = ['dynamodb']
+        self.app.config['BOTO3_ACCESS_KEY'] = 'access'
+        self.app.config['BOTO3_SECRET_KEY'] = 'secret'
+        self.app.config['BOTO3_OPTIONAL_PARAMS'] = {
+            'dynamodb': {
+                'args': ('eu-west-1'),
+                'kwargs': {
+                    'fake_param': 'fake_value'
+                }
+            }
+        }
+        b = Boto3(self.app)
+        with self.app.app_context():
+            b.connections
+            mock_client.assert_called_once_with(
+                'dynamodb',
+                'eu-west-1',
+                aws_access_key_id='access',
+                aws_secret_access_key='secret',
+                fake_param='fake_value'
+            )

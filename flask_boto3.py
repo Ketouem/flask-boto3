@@ -39,10 +39,23 @@ class Boto3(object):
             creds['aws_secret_access_key'] = secret_key
 
         try:
-            cns = {
-                svc: boto3.client(svc, **creds)
-                for svc in requested_services
-            }
+            cns = {}
+            for svc in requested_services:
+                # Check for optional parameters
+                params = current_app.config.get(
+                            'BOTO3_OPTIONAL_PARAMS', {}
+                        ).get(svc, {})
+                kwargs = params.get('kwargs', {})
+                kwargs.update(creds)
+
+                args = params.get('args', [])
+                if not(isinstance(args, list) or isinstance(args, tuple)):
+                    args = [args]
+
+                if args:
+                    cns.update({svc: boto3.client(svc, *args, **kwargs)})
+                else:
+                    cns.update({svc: boto3.client(svc, **kwargs)})
         except UnknownServiceError:
             raise
         return cns
