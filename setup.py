@@ -7,7 +7,7 @@ reqs = [str(ir.req) for ir in install_reqs]
 
 setup(
     name='Flask-Boto3',
-    version='0.1.2',
+    version='0.2.0',
     url='https://github.com/Ketouem/flask-boto3',
     license='MIT',
     author='Cyril "Ketouem" Thomas',
