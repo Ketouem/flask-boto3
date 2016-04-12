@@ -16,5 +16,15 @@ boto_flask = Boto3(app)
 def connections():
     return jsonify({k: str(v) for k, v in boto_flask.connections.items()})
 
+
+@app.route("/clients")
+def clients():
+    return jsonify({k: str(v) for k, v in boto_flask.clients.items()})
+
+
+@app.route("/resources")
+def resources():
+    return jsonify({k: str(v) for k, v in boto_flask.resources.items()})
+
 if __name__ == "__main__":
     app.run(debug=True)

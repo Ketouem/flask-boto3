@@ -32,6 +32,7 @@ class Boto3(object):
             'aws_access_key_id': None,
             'aws_secret_access_key': None
         }
+        region = current_app.config.get('BOTO3_REGION')
         access_key = current_app.config.get('BOTO3_ACCESS_KEY')
         secret_key = current_app.config.get('BOTO3_SECRET_KEY')
         if access_key and secret_key:
@@ -48,14 +49,15 @@ class Boto3(object):
                 kwargs = params.get('kwargs', {})
                 kwargs.update(creds)
 
-                args = params.get('args', [])
+                args = params.get('args', [region] if region else [])
+
                 if not(isinstance(args, list) or isinstance(args, tuple)):
                     args = [args]
 
                 if args:
-                    cns.update({svc: boto3.client(svc, *args, **kwargs)})
+                    cns.update({svc: boto3.resource(svc, *args, **kwargs)})
                 else:
-                    cns.update({svc: boto3.client(svc, **kwargs)})
+                    cns.update({svc: boto3.resource(svc, **kwargs)})
         except UnknownServiceError:
             raise
         return cns
@@ -67,6 +69,16 @@ class Boto3(object):
                 con = ctx.boto3_cns[c]
                 if hasattr(con, 'close') and callable(con.close):
                     ctx.boto3_cns[c].close()
+
+    @property
+    def resources(self):
+        return self.connections
+
+    @property
+    def clients(self):
+        return {
+            svc: self.connections[svc].meta.client for svc in self.connections
+        }
 
     @property
     def connections(self):
