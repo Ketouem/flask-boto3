@@ -5,6 +5,19 @@
 
 Flask extension that ties [boto3](https://github.com/boto/boto3) connectors to the application context.
 
+## Install
+
+* Via the cheeseshop
+    ```bash
+    $ pip install flask-boto3
+    ```
+
+* Locally
+    ```bash
+    $ git clone git@github.com:Ketouem/flask-boto3.git
+    $ cd flask-boto3
+    flask-boto3 $ pip install .
+    ```
 
 ## How-to
 
