@@ -28,36 +28,33 @@ class Boto3(object):
             svc.lower() for svc in current_app.config.get('BOTO3_SERVICES', [])
         )
 
-        creds = {
-            'aws_access_key_id': None,
-            'aws_secret_access_key': None
-        }
         region = current_app.config.get('BOTO3_REGION')
-        access_key = current_app.config.get('BOTO3_ACCESS_KEY')
-        secret_key = current_app.config.get('BOTO3_SECRET_KEY')
-        if access_key and secret_key:
-            creds['aws_access_key_id'] = access_key
-            creds['aws_secret_access_key'] = secret_key
+        sess = boto3.session.Session(
+            aws_access_key_id=current_app.config.get('BOTO3_ACCESS_KEY'),
+            aws_secret_access_key=current_app.config.get('BOTO3_SECRET_KEY'),
+            profile_name=current_app.config.get('BOTO3_PROFILE'),
+            region_name=region
+        )
 
         try:
             cns = {}
             for svc in requested_services:
                 # Check for optional parameters
                 params = current_app.config.get(
-                            'BOTO3_OPTIONAL_PARAMS', {}
-                        ).get(svc, {})
+                    'BOTO3_OPTIONAL_PARAMS', {}
+                ).get(svc, {})
                 kwargs = params.get('kwargs', {})
-                kwargs.update(creds)
 
                 args = params.get('args', [region] if region else [])
 
                 if not(isinstance(args, list) or isinstance(args, tuple)):
                     args = [args]
 
-                if args:
-                    cns.update({svc: boto3.resource(svc, *args, **kwargs)})
+                # Create resource or client
+                if svc in sess.get_available_resources():
+                    cns.update({svc: sess.resource(svc, *args, **kwargs)})
                 else:
-                    cns.update({svc: boto3.resource(svc, **kwargs)})
+                    cns.update({svc: sess.client(svc, *args, **kwargs)})
         except UnknownServiceError:
             raise
         return cns
@@ -72,13 +69,21 @@ class Boto3(object):
 
     @property
     def resources(self):
-        return self.connections
+        c = self.connections
+        return {k: v for k, v in c.items() if hasattr(c[k].meta, 'client')}
 
     @property
     def clients(self):
-        return {
-            svc: self.connections[svc].meta.client for svc in self.connections
-        }
+        """
+        Get all clients (with and without associated resources)
+        """
+        clients = {}
+        for k, v in self.connections.items():
+            if hasattr(v.meta, 'client'):       # has boto3 resource
+                clients[k] = v.meta.client
+            else:                               # no boto3 resource
+                clients[k] = v
+        return clients
 
     @property
     def connections(self):
