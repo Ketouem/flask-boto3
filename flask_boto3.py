@@ -29,12 +29,13 @@ class Boto3(object):
         )
 
         region = current_app.config.get('BOTO3_REGION')
-        sess = boto3.session.Session(
-            aws_access_key_id=current_app.config.get('BOTO3_ACCESS_KEY'),
-            aws_secret_access_key=current_app.config.get('BOTO3_SECRET_KEY'),
-            profile_name=current_app.config.get('BOTO3_PROFILE'),
-            region_name=region
-        )
+        sess_params = {
+            'aws_access_key_id': current_app.config.get('BOTO3_ACCESS_KEY'),
+            'aws_secret_access_key': current_app.config.get('BOTO3_SECRET_KEY'),
+            'profile_name': current_app.config.get('BOTO3_PROFILE'),
+            'region_name': region
+        }
+        sess = boto3.session.Session(**sess_params)
 
         try:
             cns = {}
@@ -44,6 +45,7 @@ class Boto3(object):
                     'BOTO3_OPTIONAL_PARAMS', {}
                 ).get(svc, {})
                 kwargs = params.get('kwargs', {})
+                kwargs.update(sess_params)
 
                 args = params.get('args', [region] if region else [])
 
