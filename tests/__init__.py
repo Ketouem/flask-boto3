@@ -103,7 +103,7 @@ class TestFlaskBoto3Clients(TestCase):
         self.app = Flask('unit_tests')
         self.app.config['BOTO3_REGION'] = 'eu-west-1'
 
-    def test_001_populate_application_context(self, mock_resource):
+    def test_001_populate_application_context(self, mock_client):
         self.app.config['BOTO3_SERVICES'] = ['codebuild', 'codedeploy']
         b = Boto3(self.app)
         with self.app.app_context():
@@ -112,18 +112,18 @@ class TestFlaskBoto3Clients(TestCase):
             assert_is_instance(stack.top.boto3_cns, dict)
             eq_(len(stack.top.boto3_cns), 2)
 
-    def test_002_instantiate_connectors(self, mock_resource):
+    def test_002_instantiate_connectors(self, mock_client):
         self.app.config['BOTO3_SERVICES'] = ['codebuild', 'codedeploy']
         b = Boto3(self.app)
         with self.app.app_context():
             b.connections
-            eq_(mock_resource.call_count, 2)
+            eq_(mock_client.call_count, 2)
             assert_list_equal(
-                sorted([i[0][0] for i in mock_resource.call_args_list]),
+                sorted([i[0][0] for i in mock_client.call_args_list]),
                 sorted(self.app.config['BOTO3_SERVICES'])
             )
 
-    def test_003_pass_credentials_through_app_conf(self, mock_resource):
+    def test_003_pass_credentials_through_app_conf(self, mock_client):
         self.app.config['BOTO3_SERVICES'] = ['codepipeline']
         self.app.config['BOTO3_ACCESS_KEY'] = 'access'
         self.app.config['BOTO3_SECRET_KEY'] = 'secret'
@@ -132,7 +132,7 @@ class TestFlaskBoto3Clients(TestCase):
         with self.app.app_context():
             b.connections
             region = 'eu-west-1'
-            mock_resource.assert_called_once_with(
+            mock_client.assert_called_once_with(
                 'codepipeline',
                 region,
                 aws_access_key_id='access',
@@ -141,7 +141,7 @@ class TestFlaskBoto3Clients(TestCase):
                 region_name=region
             )
 
-    def test_004_pass_optional_params_through_conf(self, mock_resource):
+    def test_004_pass_optional_params_through_conf(self, mock_client):
         self.app.config['BOTO3_SERVICES'] = ['codepipeline']
         self.app.config['BOTO3_ACCESS_KEY'] = 'access'
         self.app.config['BOTO3_SECRET_KEY'] = 'secret'
@@ -158,7 +158,7 @@ class TestFlaskBoto3Clients(TestCase):
         with self.app.app_context():
             b.connections
             region = 'eu-west-1'
-            mock_resource.assert_called_once_with(
+            mock_client.assert_called_once_with(
                 'codepipeline',
                 region,
                 aws_access_key_id='access',
@@ -168,7 +168,7 @@ class TestFlaskBoto3Clients(TestCase):
                 fake_param='fake_value'
             )
 
-    def test_005_check_boto_clients_are_available(self, mock_resource):
+    def test_005_check_boto_clients_are_available(self, mock_client):
         self.app.config['BOTO3_SERVICES'] = ['codedeploy', 'codebuild']
         b = Boto3(self.app)
         with self.app.app_context():
@@ -176,7 +176,7 @@ class TestFlaskBoto3Clients(TestCase):
             eq_(len(clients), len(self.app.config['BOTO3_SERVICES']))
             print(clients)
 
-    def test_006_check_boto_resources_are_available(self, mock_resource):
+    def test_006_check_boto_resources_are_available(self, mock_client):
         self.app.config['BOTO3_SERVICES'] = ['codedeploy', 'codebuild']
         b = Boto3(self.app)
         with self.app.app_context():
