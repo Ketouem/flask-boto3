@@ -1,3 +1,5 @@
+import os
+
 from unittest import TestCase
 from mock import patch
 from nose.tools import assert_is_instance, assert_list_equal, eq_
@@ -7,12 +9,23 @@ from flask import _app_ctx_stack as stack
 from flask.ext.boto3 import Boto3
 
 
+def create_aws_mock_config():
+    aws_dir = os.path.expanduser('~/.aws')
+    aws_config = aws_dir + '/config'
+    if not os.path.exists(aws_dir):
+        os.makedirs(aws_dir)
+    if not os.path.isfile(aws_config):
+        with open(aws_config, 'w') as f:
+            f.write('[default]')
+
+
 @patch('boto3.session.Session.resource')
 class TestFlaskBoto3Resources(TestCase):
 
     def setUp(self):
         self.app = Flask('unit_tests')
         self.app.config['BOTO3_REGION'] = 'eu-west-1'
+        create_aws_mock_config()
 
     def test_001_populate_application_context(self, mock_resource):
         self.app.config['BOTO3_SERVICES'] = ['s3', 'sqs']
@@ -102,6 +115,7 @@ class TestFlaskBoto3Clients(TestCase):
     def setUp(self):
         self.app = Flask('unit_tests')
         self.app.config['BOTO3_REGION'] = 'eu-west-1'
+        create_aws_mock_config()
 
     def test_001_populate_application_context(self, mock_client):
         self.app.config['BOTO3_SERVICES'] = ['codebuild', 'codedeploy']
