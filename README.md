@@ -1,7 +1,7 @@
 # flask-boto3
 
 [![Circle CI](https://circleci.com/gh/Ketouem/flask-boto3.svg?style=svg)](https://circleci.com/gh/Ketouem/flask-boto3)
-[![PyPI version](https://badge.fury.io/py/flask-boto3.svg)](https://badge.fury.io/py/flask-boto3)
+[![PyPI version](https://badge.fury.io/py/Flask-Boto3.svg)](https://badge.fury.io/py/Flask-Boto3)
 
 Flask extension that ties [boto3](https://github.com/boto/boto3) connectors to the application context.
 
