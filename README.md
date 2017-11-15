@@ -47,5 +47,6 @@ flask-boto3 uses several keys from a Flask configuration objects to customize it
 
 - `BOTO3_ACCESS_KEY` & `BOTO3_SECRET_KEY` : holds the AWS credentials, if `None` the extension will rely on `boto3`'s default credentials lookup.
 - `BOTO3_REGION` : holds the region that will be used for all connectors.
+- `BOTO3_PROFILE` : holds the AWS profile.
 - `BOTO3_SERVICES` : holds, as a list, the name of the AWS resources you want to use (e.g. `['sqs', 's3']`).
 - `BOTO3_OPTIONAL_PARAMS` : useful when you need to pass additional parameters to the connectors (e.g. for testing purposes), the format is a `dict` where the top-level keys are the name of the services you're using and for each the value is a `dict` containing to keys `args` (contains the parameters as `tuple`) and `kwargs` (contains the parameters as a `dict` when they should be passed as keyword arguments).
