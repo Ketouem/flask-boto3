@@ -55,14 +55,11 @@ class TestFlaskBoto3Resources(TestCase):
         b = Boto3(self.app)
         with self.app.app_context():
             b.connections
-            region = 'eu-west-1'
             mock_resource.assert_called_once_with(
                 's3',
-                region,
                 aws_access_key_id='access',
                 aws_secret_access_key='secret',
-                profile_name='default',
-                region_name=region
+                region_name='eu-west-1'
             )
 
     def test_004_pass_optional_params_through_conf(self, mock_resource):
@@ -81,14 +78,11 @@ class TestFlaskBoto3Resources(TestCase):
         b = Boto3(self.app)
         with self.app.app_context():
             b.connections
-            region = 'eu-west-1'
             mock_resource.assert_called_once_with(
                 'dynamodb',
-                region,
+                'eu-west-1',
                 aws_access_key_id='access',
                 aws_secret_access_key='secret',
-                profile_name='default',
-                region_name=region,
                 fake_param='fake_value'
             )
 
@@ -145,14 +139,11 @@ class TestFlaskBoto3Clients(TestCase):
         b = Boto3(self.app)
         with self.app.app_context():
             b.connections
-            region = 'eu-west-1'
             mock_client.assert_called_once_with(
                 'codepipeline',
-                region,
                 aws_access_key_id='access',
                 aws_secret_access_key='secret',
-                profile_name='default',
-                region_name=region
+                region_name='eu-west-1'
             )
 
     def test_004_pass_optional_params_through_conf(self, mock_client):
@@ -171,14 +162,11 @@ class TestFlaskBoto3Clients(TestCase):
         b = Boto3(self.app)
         with self.app.app_context():
             b.connections
-            region = 'eu-west-1'
             mock_client.assert_called_once_with(
                 'codepipeline',
-                region,
+                'eu-west-1',
                 aws_access_key_id='access',
                 aws_secret_access_key='secret',
-                profile_name='default',
-                region_name=region,
                 fake_param='fake_value'
             )
 

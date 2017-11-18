@@ -44,10 +44,17 @@ class Boto3(object):
                 params = current_app.config.get(
                     'BOTO3_OPTIONAL_PARAMS', {}
                 ).get(svc, {})
-                kwargs = params.get('kwargs', {})
-                kwargs.update(sess_params)
 
-                args = params.get('args', [region] if region else [])
+                # Get session params and overritde them with kwargs
+                # `profile_name` cannot be passed to clients and resources
+                kwargs = sess_params.copy()
+                kwargs.update(params.get('kwargs', {}))
+                del kwargs['profile_name']
+
+                # Overritde the region if one is defined as an argument
+                args = params.get('args', [])
+                if len(args) >= 1:
+                    del kwargs['region_name']
 
                 if not(isinstance(args, list) or isinstance(args, tuple)):
                     args = [args]
