@@ -13,6 +13,7 @@ dependencies:
 test:
     override:
         - nosetests --with-xunit --xunit-file=$CIRCLE_TEST_REPORTS/xunit.xml --cover-branches --with-coverage --cover-erase --cover-package=flask_boto3 --cover-html --cover-html-dir=$CIRCLE_ARTIFACTS/coverage
+        - make bandit
 
 deployment:
     release:
