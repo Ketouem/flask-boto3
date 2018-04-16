@@ -7,15 +7,16 @@ reqs = [str(ir.req) for ir in install_reqs]
 
 setup(
     name='Flask-Boto3',
-    version='0.3.1',
+    version='0.3.2',
     url='https://github.com/Ketouem/flask-boto3',
     license='MIT',
     author='Cyril "Ketouem" Thomas',
     author_email='ketouem@gmail.com',
     description='Flask extension that ties boto3 to the application',
-    py_modules=['flask_boto3'],
+    packages=['flask_boto3'],
     zip_safe=False,
     include_package_data=True,
+    test_suite='tests',
     install_requires=reqs,
     platforms='any',
     classifiers=[

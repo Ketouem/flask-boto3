@@ -2,6 +2,11 @@
 __pycache__/
 *.py[cod]
 *$py.class
+cover
+.noseids
+
+# vscode
+.vscode
 
 # C extensions
 *.so
