@@ -1,4 +1,4 @@
-FROM themattrix/tox-base
+FROM circleci/python:3.6
 
 MAINTAINER Matthew Tardiff <mattrix@gmail.com>
 

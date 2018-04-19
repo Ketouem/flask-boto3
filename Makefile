@@ -1,5 +1,6 @@
 excludes = \*~ \*.pyc .cache/\* test_\* __pycache__/\*
 
+
 .PHONY: clean
 clean:
 	find . -type f -name "*.pyc" -delete
@@ -10,7 +11,7 @@ test:
 
 .PHONY: circle_test
 circle_test:
-	nosetests --with-xunit --xunit-file=$CIRCLE_TEST_REPORTS/xunit.xml --cover-branches --with-coverage --cover-erase --cover-package=flask_boto3 --cover-html --cover-html-dir=$CIRCLE_ARTIFACTS/coverage
+	nosetests --with-xunit --xunit-file=test-reports/xunit.xml --cover-branches --with-coverage --cover-erase --cover-package=flask_boto3 --cover-html --cover-html-dir=test-reports/
 
 .PHONY: bandit
 bandit:

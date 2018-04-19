@@ -1,34 +1,62 @@
 # Python CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-python/ for more details
-#
+python: &python
+  docker:
+    - image: circleci/python:3.6
+
 version: 2
+
 jobs:
-  # using tox
   build:
-    docker:
-      # specify the version you desire here
-      # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
-      # - image: circleci/python:3.6.1
-      - image: themattrix/tox
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
-
-    working_directory: ~/repo
+    <<: *python
     steps:
       - checkout
       - run:
-          name: run tests
+          name: Install/Update python-dev
+          command: sudo apt-get update && sudo apt-get install -y python-dev
+      - run:
+          name: Update PATH
+          command: echo 'export PATH=$HOME/.local/bin:$PATH' >> $BASH_ENV
+      - run:
+          name: Install tox
+          command: pip install --user $(cat requirements_test.txt | grep tox)
+      - run:
+          name: Create coverage dir
+          command: mkdir test-reports
+      - run:
+          name: Run tests
           command: TOXBUILD=true tox
       - store_artifacts:
-          path: test-reports
-          destination: test-reports
+          path: test-reports/
+      - store_test_results:
+          path: test-reports/
+
+  deploy:
+    <<: *python
+    steps:
+      - checkout
+      - run:
+          name: Update PATH
+          command: echo 'export PATH=$HOME/.local/bin:$PATH' >> $BASH_ENV
+      - run:
+          name: Install Twine
+          command: pip install --user twine
+      - run:
+          name: Push to cheeseshop
+          command: ./push_to_cheeseshop.sh
 
 workflows:
   version: 2
-  flask_boto3:
+  build-test-deploy:
     jobs:
-      - build
+      - build:
+          filters:
+            tags:
+              only: /.*/
+      - deploy:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /^\d+(?:\.\d+){2}$/
+            branches:
+              only: master
