@@ -27,4 +27,4 @@ def resources():
     return jsonify({k: str(v) for k, v in boto_flask.resources.items()})
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()

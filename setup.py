@@ -1,4 +1,8 @@
-from pip.req import parse_requirements
+# https://stackoverflow.com/a/49837302
+try: # for pip >= 10
+    from pip._internal.req import parse_requirements
+except ImportError: # for pip <= 9.0.3
+    from pip.req import parse_requirements
 from setuptools import setup
 
 # Requirements
@@ -13,9 +17,10 @@ setup(
     author='Cyril "Ketouem" Thomas',
     author_email='ketouem@gmail.com',
     description='Flask extension that ties boto3 to the application',
-    py_modules=['flask_boto3'],
+    packages=['flask_boto3'],
     zip_safe=False,
     include_package_data=True,
+    test_suite='tests',
     install_requires=reqs,
     platforms='any',
     classifiers=[
