@@ -59,4 +59,4 @@ workflows:
             tags:
               only: /^\d+(?:\.\d+){2}$/
             branches:
-              only: master
+              ignore: /.*/
