@@ -17,18 +17,15 @@ jobs:
           name: Update PATH
           command: echo 'export PATH=$HOME/.local/bin:$PATH' >> $BASH_ENV
       - run:
-          name: Install tox
-          command: pip install --user $(cat requirements_test.txt | grep tox)
-      - run:
-          name: Create coverage dir
-          command: mkdir test-reports
+          name: Install tox & bandit
+          command: pip install --user tox bandit
       - run:
           name: Run tests
-          command: TOXBUILD=true tox
+          command: tox
       - store_artifacts:
-          path: test-reports/
+          path: test_results
       - store_test_results:
-          path: test-reports/
+          path: test_results
 
   deploy:
     <<: *python
