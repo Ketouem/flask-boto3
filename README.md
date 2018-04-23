@@ -4,6 +4,7 @@
 [![PyPI version](https://badge.fury.io/py/Flask-Boto3.svg)](https://badge.fury.io/py/Flask-Boto3)
 
 Flask extension that ties [boto3](https://github.com/boto/boto3) connectors to the application context.
+To be used with Python 3.6+.
 
 ## Install
 

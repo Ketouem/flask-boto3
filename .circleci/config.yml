@@ -11,17 +11,14 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install/Update python-dev
-          command: sudo apt-get update && sudo apt-get install -y python-dev
-      - run:
           name: Update PATH
           command: echo 'export PATH=$HOME/.local/bin:$PATH' >> $BASH_ENV
       - run:
-          name: Install tox , tox-pipenv & bandit
-          command: pip install --user tox==2.9.1 tox-pipenv bandit
+          name: Install pipenv & bandit
+          command: pip install --user pipenv bandit
       - run:
           name: Run tests
-          command: tox
+          command: pipenv install --dev && pipenv run make test
       - store_artifacts:
           path: test_results
       - store_test_results:
