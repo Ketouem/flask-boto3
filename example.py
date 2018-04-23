@@ -26,5 +26,11 @@ def clients():
 def resources():
     return jsonify({k: str(v) for k, v in boto_flask.resources.items()})
 
+@app.route("/buckets")
+def buckets():
+    return jsonify({
+        "buckets": [b.name for b in boto_flask.resources['s3'].buckets.all()]
+    })
+
 if __name__ == "__main__":
     app.run()
