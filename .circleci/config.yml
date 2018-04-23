@@ -14,11 +14,14 @@ jobs:
           name: Update PATH
           command: echo 'export PATH=$HOME/.local/bin:$PATH' >> $BASH_ENV
       - run:
-          name: Install pipenv & bandit
-          command: pip install --user pipenv bandit
+          name: Install Pipenv
+          command: pip install --user pipenv
+      - run:
+          name: Install dependencies and module
+          command: pipenv lock -r > requirements.txt && pipenv install --dev -e .
       - run:
           name: Run tests
-          command: pipenv install --dev && pipenv run make test
+          command: pipenv install --dev && make test && make bandit
       - store_artifacts:
           path: test_results
       - store_test_results:

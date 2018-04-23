@@ -1,19 +1,17 @@
 excludes = \*~ \*.pyc .cache/\* test_\* __pycache__/\*
 
-TEST_RESULTS_FOLDER ?= .
+TEST_RESULTS_FOLDER ?= ./test_results
 
 .PHONY: clean
 clean:
 	find . -type f -name "*.pyc" -delete
+	rm -fr test_results
 
 .PHONY: test
 test:
-	nosetests --with-xunit --xunit-file=${TEST_RESULTS_FOLDER}/nosetests.xml --cover-branches --with-coverage --cover-erase --cover-package=flask_boto3 --cover-html --cover-html-dir=${TEST_RESULTS_FOLDER}/cover
+	mkdir -p ${TEST_RESULTS_FOLDER}
+	pipenv run py.test --junitxml=${TEST_RESULTS_FOLDER}/xunit.xml --cov=flask_boto3 --cov-report html:${TEST_RESULTS_FOLDER}/html
 
 .PHONY: bandit
 bandit:
-	bandit -r flask_boto3/
-
-.PHONY: coveralls
-coveralls:
-	coveralls
+	pipenv run bandit -r flask_boto3/

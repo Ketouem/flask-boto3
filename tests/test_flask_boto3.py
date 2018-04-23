@@ -2,7 +2,6 @@ import os
 
 from unittest import TestCase
 from mock import patch
-from nose.tools import assert_is_instance, assert_list_equal, eq_
 
 from flask import Flask
 from flask import _app_ctx_stack as stack
@@ -31,21 +30,19 @@ class TestFlaskBoto3Resources(TestCase):
         self.app.config['BOTO3_SERVICES'] = ['s3', 'sqs']
         b = Boto3(self.app)
         with self.app.app_context():
-            assert_is_instance(b.connections, dict)
-            eq_(len(b.connections), 2)
-            assert_is_instance(stack.top.boto3_cns, dict)
-            eq_(len(stack.top.boto3_cns), 2)
+            assert isinstance(b.connections, dict)
+            assert len(b.connections) == 2
+            assert isinstance(stack.top.boto3_cns, dict)
+            assert len(stack.top.boto3_cns) == 2
 
     def test_002_instantiate_connectors(self, mock_resource):
         self.app.config['BOTO3_SERVICES'] = ['s3', 'sqs', 'dynamodb']
         b = Boto3(self.app)
         with self.app.app_context():
             b.connections
-            eq_(mock_resource.call_count, 3)
-            assert_list_equal(
-                sorted([i[0][0] for i in mock_resource.call_args_list]),
-                sorted(self.app.config['BOTO3_SERVICES'])
-            )
+            assert mock_resource.call_count == 3
+            assert sorted([i[0][0] for i in mock_resource.call_args_list]) == \
+                   sorted(self.app.config['BOTO3_SERVICES'])
 
     def test_003_pass_credentials_through_app_conf(self, mock_resource):
         self.app.config['BOTO3_SERVICES'] = ['s3']
@@ -91,7 +88,7 @@ class TestFlaskBoto3Resources(TestCase):
         b = Boto3(self.app)
         with self.app.app_context():
             clients = b.clients
-            eq_(len(clients), len(self.app.config['BOTO3_SERVICES']))
+            assert len(clients) == len(self.app.config['BOTO3_SERVICES'])
             print(clients)
 
     def test_006_check_boto_resources_are_available(self, mock_resource):
@@ -99,7 +96,7 @@ class TestFlaskBoto3Resources(TestCase):
         b = Boto3(self.app)
         with self.app.app_context():
             resources = b.resources
-            eq_(len(resources), len(self.app.config['BOTO3_SERVICES']))
+            assert len(resources) == len(self.app.config['BOTO3_SERVICES'])
             print(resources)
 
 
@@ -115,21 +112,19 @@ class TestFlaskBoto3Clients(TestCase):
         self.app.config['BOTO3_SERVICES'] = ['codebuild', 'codedeploy']
         b = Boto3(self.app)
         with self.app.app_context():
-            assert_is_instance(b.connections, dict)
-            eq_(len(b.connections), 2)
-            assert_is_instance(stack.top.boto3_cns, dict)
-            eq_(len(stack.top.boto3_cns), 2)
+            assert isinstance(b.connections, dict)
+            assert len(b.connections) == 2
+            assert isinstance(stack.top.boto3_cns, dict)
+            assert len(stack.top.boto3_cns) == 2
 
     def test_002_instantiate_connectors(self, mock_client):
         self.app.config['BOTO3_SERVICES'] = ['codebuild', 'codedeploy']
         b = Boto3(self.app)
         with self.app.app_context():
             b.connections
-            eq_(mock_client.call_count, 2)
-            assert_list_equal(
-                sorted([i[0][0] for i in mock_client.call_args_list]),
-                sorted(self.app.config['BOTO3_SERVICES'])
-            )
+            assert mock_client.call_count == 2
+            assert sorted([i[0][0] for i in mock_client.call_args_list]) == \
+                   sorted(self.app.config['BOTO3_SERVICES'])
 
     def test_003_pass_credentials_through_app_conf(self, mock_client):
         self.app.config['BOTO3_SERVICES'] = ['codepipeline']
@@ -175,13 +170,11 @@ class TestFlaskBoto3Clients(TestCase):
         b = Boto3(self.app)
         with self.app.app_context():
             clients = b.clients
-            eq_(len(clients), len(self.app.config['BOTO3_SERVICES']))
-            print(clients)
+            assert len(clients) == len(self.app.config['BOTO3_SERVICES'])
 
     def test_006_check_boto_resources_are_available(self, mock_client):
         self.app.config['BOTO3_SERVICES'] = ['codedeploy', 'codebuild']
         b = Boto3(self.app)
         with self.app.app_context():
             resources = b.resources
-            eq_(len(resources), len(self.app.config['BOTO3_SERVICES']))
-            print(resources)
+            assert len(resources) == len(self.app.config['BOTO3_SERVICES'])

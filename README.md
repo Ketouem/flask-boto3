@@ -17,7 +17,7 @@ To be used with Python 3.6+.
     ```bash
     $ git clone git@github.com:Ketouem/flask-boto3.git
     $ cd flask-boto3
-    flask-boto3 $ pipenv install
+    flask-boto3 $ pipenv install -e .
     ```
 
 ## How-to
