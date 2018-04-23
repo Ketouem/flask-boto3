@@ -17,8 +17,8 @@ jobs:
           name: Update PATH
           command: echo 'export PATH=$HOME/.local/bin:$PATH' >> $BASH_ENV
       - run:
-          name: Install tox & bandit
-          command: pip install --user tox bandit
+          name: Install tox , tox-pipenv & bandit
+          command: pip install --user tox==2.9.1 tox-pipenv bandit
       - run:
           name: Run tests
           command: tox
@@ -35,8 +35,8 @@ jobs:
           name: Update PATH
           command: echo 'export PATH=$HOME/.local/bin:$PATH' >> $BASH_ENV
       - run:
-          name: Install Twine
-          command: pip install --user twine
+          name: Install Twine & Pipenv
+          command: pip install --user twine pipenv
       - run:
           name: Push to cheeseshop
           command: ./push_to_cheeseshop.sh

@@ -12,11 +12,11 @@ Flask extension that ties [boto3](https://github.com/boto/boto3) connectors to t
     $ pip install flask-boto3
     ```
 
-* Locally
+* Locally with [Pipenv](https://docs.pipenv.org/)
     ```bash
     $ git clone git@github.com:Ketouem/flask-boto3.git
     $ cd flask-boto3
-    flask-boto3 $ pip install .
+    flask-boto3 $ pipenv install
     ```
 
 ## How-to
